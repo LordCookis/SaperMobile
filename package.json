@@ -12,13 +12,17 @@
     "expo": "~49.0.11",
     "expo-status-bar": "~1.6.0",
     "react": "18.2.0",
-    "react-native": "0.72.4"
+    "react-native": "0.72.4",
+    "react-native-web": "~0.19.6",
+    "react-dom": "18.2.0",
+    "@expo/webpack-config": "^19.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
     "@tsconfig/react-native": "^3.0.2",
     "@types/jest": "^29.5.5",
-    "@types/react": "^18.2.21",
+    "@types/react": "^18.2.22",
+    "@types/react-native": "^0.72.2",
     "@types/react-test-renderer": "^18.0.1",
     "typescript": "^5.2.2"
   },
