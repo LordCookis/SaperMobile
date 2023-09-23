@@ -10,6 +10,7 @@ export default function App() {
   const [size, setSize] = useState({X: 0, Y: 0})
   const [bombs, setBombs] = useState(0)
   const gameActive = useRef(false)
+  const executed = useRef(false)
 
   const gameStart = () => {
     const fieldX = []
@@ -35,6 +36,7 @@ export default function App() {
     }
     setField(fieldX)
     gameActive.current = true
+    executed.current = false
   }
 
   return(
@@ -47,7 +49,14 @@ export default function App() {
       />
       <Text>{size.X} / {size.Y}</Text>
       <Button title='НАЧАТЬ ИГРУ' onPress={gameStart}/>
-      {gameActive.current && <Field field = {field}/>}
+      {
+        <Field 
+          field = {field}
+          setField = {setField}
+          bombs = {bombs}
+          gameActive = {gameActive}
+          executed = {executed}
+        />}
       <StatusBar style="auto"/>
     </View>
   )
