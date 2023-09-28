@@ -1,7 +1,9 @@
 import { styles } from '../styles/styles'
+import * as React from 'react'
 import { View, Text, TextInput } from "react-native"
 
-export default function GameInputs({size, setSize, setBombs}) {
+export default function GameInputs({size, setSize, setBombs}:any){
+  
   return(
     <View>
       <Text>Введите размер поля:</Text>

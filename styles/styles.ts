@@ -153,8 +153,8 @@ export const styles = StyleSheet.create({
     fontFamily: 'monospace',
     fontSize: 35,
     transition: 200,
-  }, 
-  cell8: {
+  },
+  cellF: {
     height: 55,
     width: 55,
     margin: 5,
