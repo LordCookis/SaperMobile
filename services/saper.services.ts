@@ -1,28 +1,28 @@
 export const saperServices = {
   checkBomb(idX:number, id:number, fieldX:any) {
     let countBomb = 0
-    if (fieldX[idX-1]?.array[id-1]?.bomb) {
+    if (fieldX[idX-1]?.row[id-1]?.bomb) {
       countBomb++
     }
-    if (fieldX[idX-1]?.array[id]?.bomb) {
+    if (fieldX[idX-1]?.row[id]?.bomb) {
       countBomb++
     }
-    if (fieldX[idX-1]?.array[id+1]?.bomb) {
+    if (fieldX[idX-1]?.row[id+1]?.bomb) {
       countBomb++
     }
-    if (fieldX[idX]?.array[id-1]?.bomb) {
+    if (fieldX[idX]?.row[id-1]?.bomb) {
       countBomb++
     }
-    if (fieldX[idX]?.array[id+1]?.bomb) {
+    if (fieldX[idX]?.row[id+1]?.bomb) {
       countBomb++
     }
-    if (fieldX[idX+1]?.array[id-1]?.bomb) {
+    if (fieldX[idX+1]?.row[id-1]?.bomb) {
       countBomb++
     }
-    if (fieldX[idX+1]?.array[id]?.bomb) {
+    if (fieldX[idX+1]?.row[id]?.bomb) {
       countBomb++
     }
-    if (fieldX[idX+1]?.array[id+1]?.bomb) {
+    if (fieldX[idX+1]?.row[id+1]?.bomb) {
       countBomb++
     }
     return countBomb
@@ -42,8 +42,8 @@ export const saperServices = {
       cell.idX >= 0 &&
       cell.idX < fieldX.length &&
       cell.id >= 0 &&
-      cell.id < fieldX[cell.idX]?.array.length &&
-      !fieldX[cell.idX].array[cell.id].click
+      cell.id < fieldX[cell.idX]?.row.length &&
+      !fieldX[cell.idX].row[cell.id].click
     )))
     return stack
   }

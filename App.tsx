@@ -50,6 +50,7 @@ export default function App() {
         idX++
       }
       setField(fieldX)
+      setBombs({...bombs, Y: bombs.X})
       gameActive.current = true
       executed.current = false
     }
@@ -61,6 +62,7 @@ export default function App() {
       <GameInputs
         size = {size}
         setSize = {setSize}
+        bombs = {bombs}
         setBombs = {setBombs}
       />
       <Button title='НАЧАТЬ ИГРУ' onPress={gameStart}/>
