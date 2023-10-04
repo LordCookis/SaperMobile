@@ -9,9 +9,9 @@ export default function GameInputs({size, setSize, bombs, setBombs}:any){
         <TextInput style={styles.inputSize} placeholder="Ширина" inputMode='numeric' onChangeText={sizeX => setSize({...size, X: sizeX})}></TextInput>
         <TextInput style={styles.inputSize} placeholder="Высота" inputMode='numeric' onChangeText={sizeY => setSize({...size, Y: sizeY})}></TextInput>
       </View>
-      <View>
-        <Text style={styles.inputText}>Бомб: </Text>
-        <TextInput style={styles.input} placeholder="0" inputMode='numeric' onChangeText={bomb => setBombs({...bombs, X: bomb})}></TextInput>
+      <View style={styles.inputView}>
+        <TextInput style={styles.inputData} placeholder="Бомб" inputMode='numeric' onChangeText={bomb => setBombs({...bombs, X: bomb})}></TextInput>
+        <TextInput style={styles.inputData} placeholder="Время" inputMode='numeric'></TextInput>
       </View>
     </View>
   )

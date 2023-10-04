@@ -1,15 +1,18 @@
 import { styles } from '../styles/styles'
 import * as React from 'react'
-import { View, Text, Pressable } from "react-native"
+import { useState } from 'react'
+import { View, Pressable } from "react-native"
 import { services } from '../services'
 
 export default function Field({field, setField, bombs, executed, winX, setWin}:any) {
+  interface Flag {X: number, Y: number}
+  const [flags, setFlags] = useState<Flag>({X: 0, Y: 0})
+
   const randomBomb = (cell:any) => {
     const arrayBombs:any = []
     while (arrayBombs.length < bombs.Y) {
       const randomCell = Math.floor(Math.random() * (field.length * field[0].row.length))
       randomCell !== cell.id && !arrayBombs.includes(randomCell) ? arrayBombs.push(randomCell) : null
-      console.log(field[0].row.length)
     }
     const fieldX = [...field]
     fieldX.map((rowX) => {
@@ -47,13 +50,29 @@ export default function Field({field, setField, bombs, executed, winX, setWin}:a
     if (!cell.flag && !cell.click) { checkCell(idX, id) }
   }
 
+  const putFlag = (cell:any) => {
+    if (!cell.click && executed.current) {
+      const fieldX:any = [...field]
+      if (cell.flag) {
+        cell.flag = false
+        setFlags({...flags, Y: flags.X - 1})
+        cell.bomb ? setFlags({...flags, Y: flags.Y - 1}) : null 
+      } else {
+        cell.flag = true
+        setFlags({...flags, Y: flags.X + 1})
+        cell.bomb ? setFlags({...flags, Y: flags.Y + 1}) : null
+      }
+      setField(fieldX)
+    }
+  }
+
   return(
     <View style={styles.field}>
       {field?.map((cellX:any, indexX:number)=>{
         return(
           <View style={styles.fieldCellX} key={cellX.id}>{cellX.row.map((cell:any, index:number)=>{
             return(
-              <Pressable onPress={()=>cellClick(indexX, index)}>
+              <Pressable onPress={()=>cellClick(indexX, index)} onLongPress={()=>putFlag(cell, indexX, index)} delayLongPress={300}>
                 <View style={cell.click && cell.bomb ? styles.cellB : 
                   cell.click && cell.countBomb === 0 ? styles.cellC : 
                   cell.click && cell.countBomb === 1 ? styles.cell1 : 
@@ -66,7 +85,7 @@ export default function Field({field, setField, bombs, executed, winX, setWin}:a
                   cell.click && cell.countBomb === 8 ? styles.cell8 : 
                   cell.flag === true ? styles.cellF :
                   styles.cell} key={cell.id}>
-                  <Text>{cell.countBomb}</Text>
+                  {cell.countBomb}
                 </View>
               </Pressable>
             )

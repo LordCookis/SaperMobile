@@ -2,7 +2,7 @@ import { StatusBar } from 'expo-status-bar'
 import { styles } from './styles/styles'
 import { useState, useRef } from 'react'
 import * as React from 'react'
-import { View, Text, Button } from 'react-native'
+import { View, Text, Pressable } from 'react-native'
 import GameInputs from './components/GameInputs'
 import Field from './components/Field'
 
@@ -65,7 +65,7 @@ export default function App() {
         bombs = {bombs}
         setBombs = {setBombs}
       />
-      <Button title='НАЧАТЬ ИГРУ' onPress={gameStart}/>
+      <Pressable style={styles.button} onPress={gameStart}>НАЧАТЬ ИГРУ</Pressable>
       {
         <Field 
           field = {field}
