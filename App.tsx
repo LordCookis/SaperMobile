@@ -12,6 +12,8 @@ export default function App() {
   const [size, setSize] = useState<Size>({X: 0, Y: 0})
   interface Bomb {X: number, Y: number}
   const [bombs, setBombs] = useState<Bomb>({X: 0, Y: 0})
+  interface Flag {X: number, Y: number}
+  const [flags, setFlags] = useState<Flag>({X: 0, Y: 0})
   const gameActive = useRef<boolean>(false)
   const executed = useRef<boolean>(false)
   const winX = useRef<number>(0)
@@ -51,6 +53,7 @@ export default function App() {
       }
       setField(fieldX)
       setBombs({...bombs, Y: bombs.X})
+      setFlags({X: 0, Y: 0})
       gameActive.current = true
       executed.current = false
     }
@@ -65,18 +68,26 @@ export default function App() {
         bombs = {bombs}
         setBombs = {setBombs}
       />
-      <Pressable style={styles.button} onPress={gameStart}>НАЧАТЬ ИГРУ</Pressable>
+      <View style={styles.buttonView}>
+        <Text style={styles.button} onPress={gameStart}>НАЧАТЬ ИГРУ</Text>
+      </View>
+      <View style={styles.viewInfo}>
+        <Text style={styles.textInfo}>Отмечено: {flags.X} / {bombs.Y}</Text>
+        <Text style={styles.textInfo}>Времени осталось: 0c</Text>
+      </View>
       {
         <Field 
           field = {field}
           setField = {setField}
           bombs = {bombs}
+          flags = {flags}
+          setFlags = {setFlags}
           gameActive = {gameActive}
           executed = {executed}
           winX = {winX}
           setWin = {setWin}
         />}
-      <StatusBar style="auto"/>
+      <StatusBar style="light"/>
       <Text>{error}</Text>
     </View>
   )
