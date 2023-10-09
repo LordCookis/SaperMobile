@@ -1,6 +1,6 @@
 import { styles } from '../styles/styles'
 import * as React from 'react'
-import { View, Text, TextInput } from "react-native"
+import { View, TextInput } from "react-native"
 
 export default function GameInputs({size, setSize, bombs, setBombs}:any){
   return(

@@ -5,6 +5,7 @@ import * as React from 'react'
 import { View, Text, Pressable } from 'react-native'
 import GameInputs from './components/GameInputs'
 import Field from './components/Field'
+import Result from './components/Result'
 
 export default function App() {
   const [field, setField] = useState<any>([])
@@ -12,18 +13,17 @@ export default function App() {
   const [size, setSize] = useState<Size>({X: 0, Y: 0})
   interface Bomb {X: number, Y: number}
   const [bombs, setBombs] = useState<Bomb>({X: 0, Y: 0})
+  const [time, setTime] = useState<number>(0)
   interface Flag {X: number, Y: number}
   const [flags, setFlags] = useState<Flag>({X: 0, Y: 0})
   const gameActive = useRef<boolean>(false)
   const executed = useRef<boolean>(false)
-  const winX = useRef<number>(0)
-  const [win, setWin] = useState<number>(0)
+  const win = useRef<number>(0)
   const [error, setError] = useState<string>("")
 
   const gameStart = () => {
     const fieldX:any = []
     let idX:number = 0
-    let idY:number = 0
     if (!size.X || !size.Y) {
       setError("Ошибка: размер поля не указан")
     } else if (size.X * size.Y === bombs.X) {
@@ -37,19 +37,18 @@ export default function App() {
         const rowX:any = []
         for (let j = 0; j < size.Y; j++) {
           rowX.push({
-            id: idY,
+            id: idX,
             bomb: false,
             click: false,
             countBomb: 0,
             flag: false
           })
-          idY++
+          idX++
         }
         fieldX.push({
-          id: idX,
+          id: i,
           row: rowX
         })
-        idX++
       }
       setField(fieldX)
       setBombs({...bombs, Y: bombs.X})
@@ -61,34 +60,40 @@ export default function App() {
 
   return(
     <View style={styles.mainView}>
-      <Text style={styles.mainText}>Разрывная</Text>
+      <Text style={styles.mainText}>💥Разрывная💥</Text>
       <GameInputs
         size = {size}
         setSize = {setSize}
         bombs = {bombs}
         setBombs = {setBombs}
       />
-      <View style={styles.buttonView}>
-        <Text style={styles.button} onPress={gameStart}>НАЧАТЬ ИГРУ</Text>
-      </View>
+      <Pressable style={styles.buttonView} onPress={gameStart}>
+        <Text style={styles.button}>НАЧАТЬ ИГРУ</Text>
+      </Pressable>
       <View style={styles.viewInfo}>
         <Text style={styles.textInfo}>Отмечено: {flags.X} / {bombs.Y}</Text>
         <Text style={styles.textInfo}>Времени осталось: 0c</Text>
       </View>
-      {
-        <Field 
-          field = {field}
-          setField = {setField}
-          bombs = {bombs}
-          flags = {flags}
-          setFlags = {setFlags}
-          gameActive = {gameActive}
-          executed = {executed}
-          winX = {winX}
-          setWin = {setWin}
-        />}
+      {<Field 
+        field = {field}
+        setField = {setField}
+        bombs = {bombs}
+        flags = {flags}
+        setFlags = {setFlags}
+        gameActive = {gameActive}
+        executed = {executed}
+        win = {win}
+      />}
       <StatusBar style="light"/>
-      <Text>{error}</Text>
+      <Text style={styles.errorText}>{error}</Text>
+      {win.current === 0 || 
+      <Result
+        setField = {setField}
+        size = {size}
+        bombs = {bombs}
+        time = {time}
+        win = {win}
+      />}
     </View>
   )
 }

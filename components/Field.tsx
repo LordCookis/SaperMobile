@@ -1,9 +1,17 @@
 import { styles } from '../styles/styles'
 import * as React from 'react'
+import { useEffect } from 'react' 
 import { View, Pressable, Text } from "react-native"
 import { services } from '../services'
 
-export default function Field({field, setField, bombs, executed, winX, setWin, flags, setFlags}:any) {
+export default function Field({field, setField, bombs, executed, win, flags, setFlags}:any) {
+  useEffect(() => {
+    if ((flags.X + flags.Y) === (bombs.Y * 2) && flags.Y > 0) {
+      win.current = 1
+      setFlags({...flags, Y: flags.X})
+    }
+  }, [flags.X])
+
   const randomBomb = (cell:any) => {
     const arrayBombs:any = []
     while (arrayBombs.length < bombs.Y) {
@@ -28,8 +36,7 @@ export default function Field({field, setField, bombs, executed, winX, setWin, f
       if (fieldX[idX].row[id].bomb) {
         fieldX[idX].row[id].countBomb = 0
         fieldX.forEach((rowX: any) => {rowX.row.forEach((cellX: any) => {cellX.bomb ? cellX.click = true : null})})
-        setWin(2)
-        winX.current = 2
+        win.current = 2
       } else if (!fieldX[idX].row[id].countBomb) {    
         stack = services.saper.checkAround(idX, id, fieldX, stack)
       }
