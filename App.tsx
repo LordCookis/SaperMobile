@@ -13,7 +13,8 @@ export default function App() {
   const [size, setSize] = useState<Size>({X: 0, Y: 0})
   interface Bomb {X: number, Y: number}
   const [bombs, setBombs] = useState<Bomb>({X: 0, Y: 0})
-  const [time, setTime] = useState<number>(0)
+  interface Time {X: number, Y: number}
+  const [times, setTimes] = useState<Time>({X: 0, Y: 0})
   interface Flag {X: number, Y: number}
   const [flags, setFlags] = useState<Flag>({X: 0, Y: 0})
   const gameActive = useRef<boolean>(false)
@@ -52,6 +53,7 @@ export default function App() {
       }
       setField(fieldX)
       setBombs({...bombs, Y: bombs.X})
+      setTimes({...times, Y: times.X})
       setFlags({X: 0, Y: 0})
       gameActive.current = true
       executed.current = false
@@ -66,21 +68,27 @@ export default function App() {
         setSize = {setSize}
         bombs = {bombs}
         setBombs = {setBombs}
+        times = {times}
+        setTimes = {setTimes}
       />
       <Pressable style={styles.buttonView} onPress={gameStart}>
         <Text style={styles.button}>НАЧАТЬ ИГРУ</Text>
       </Pressable>
+      {times.Y ? <View style={styles.viewInfo}>
+        <Text style={styles.textInfo}>Отмечено: {flags.X} / {bombs.Y}</Text>
+        <Text style={styles.textInfo}>Времени осталось: {times.Y}c</Text>
+      </View> :
       <View style={styles.viewInfo}>
         <Text style={styles.textInfo}>Отмечено: {flags.X} / {bombs.Y}</Text>
-        <Text style={styles.textInfo}>Времени осталось: 0c</Text>
-      </View>
-      {<Field 
+      </View>}
+      {<Field
         field = {field}
         setField = {setField}
         bombs = {bombs}
+        times = {times}
+        setTimes = {setTimes}
         flags = {flags}
         setFlags = {setFlags}
-        gameActive = {gameActive}
         executed = {executed}
         win = {win}
       />}
@@ -91,7 +99,7 @@ export default function App() {
         setField = {setField}
         size = {size}
         bombs = {bombs}
-        time = {time}
+        times = {times}
         win = {win}
       />}
     </View>

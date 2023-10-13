@@ -4,7 +4,7 @@ import { useEffect } from 'react'
 import { View, Pressable, Text } from "react-native"
 import { services } from '../services'
 
-export default function Field({field, setField, bombs, executed, win, flags, setFlags}:any) {
+export default function Field({field, setField, bombs, times, setTimes, flags, setFlags, executed, win}:any) {
   useEffect(() => {
     if ((flags.X + flags.Y) === (bombs.Y * 2) && flags.Y > 0) {
       win.current = 1
@@ -23,6 +23,23 @@ export default function Field({field, setField, bombs, executed, win, flags, set
       rowX.row.map((cellX:any) => arrayBombs.includes(cellX.id) ? cellX.bomb = true : null)
     })
     setField(fieldX)
+  }
+
+  const startTimer = () => {
+    let timeX = times.Y
+    const timer = setInterval(() => {
+      if (timeX === 1) {
+        clearInterval(timer)
+        win.current = 2
+        timeX--
+        setTimes({...times, Y: timeX})
+      } else if (win.current > 0) {
+        clearInterval(timer)
+      } else {
+        timeX--
+        setTimes({...times, Y: timeX})
+      }
+    }, 1000)
   }
 
   const checkCell = (idX:number, id:number) => {
@@ -49,6 +66,7 @@ export default function Field({field, setField, bombs, executed, win, flags, set
     if (!executed.current) {
       executed.current = true
       randomBomb(cell)
+      startTimer()
     }
     if (!cell.flag && !cell.click) { checkCell(idX, id) }
   }
