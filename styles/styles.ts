@@ -236,6 +236,7 @@ export const styles = StyleSheet.create({
     fontSize: 25,
   },
   resultButton: {
+    margin: 15,
     borderWidth: 3,
     borderColor: '#c6e6e9',
     borderRadius: 5,
