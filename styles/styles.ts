@@ -4,6 +4,7 @@ export const styles = StyleSheet.create({
   mainView: {
     flex: 1,
     padding: 15,
+    justifyContent: 'center',
     alignItems: 'center',
     color: '#080808',
     backgroundColor: '#080808',
@@ -66,7 +67,6 @@ export const styles = StyleSheet.create({
     color: '#c6e6e9',
     fontFamily: 'monospace',
     fontSize: 25,
-    transition: 200,
   },
   viewInfo: {
     width: 300,
@@ -222,12 +222,12 @@ export const styles = StyleSheet.create({
   resultWin: {
     color: '#4bc04b',
     fontFamily: 'monospace',
-    fontSize: 70,
+    fontSize: 40,
   },
   resultLose: {
     color: '#e66969',
     fontFamily: 'monospace',
-    fontSize: 100,
+    fontSize: 50,
   },
   resultText: {
     margin: 10,

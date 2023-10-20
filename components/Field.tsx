@@ -1,8 +1,10 @@
 import { styles } from '../styles/styles'
 import * as React from 'react'
 import { useEffect } from 'react' 
-import { View, FlatList, ScrollView, Pressable, Text } from "react-native"
+import { View, ScrollView, Pressable, Text } from "react-native"
+import { DraxProvider, DraxView } from 'react-native-drax'
 import { services } from '../services'
+import { GestureHandlerRootView } from 'react-native-gesture-handler'
 
 export default function Field({field, setField, bombs, times, setTimes, flags, setFlags, executed, win}:any) {
   useEffect(() => {
@@ -84,35 +86,36 @@ export default function Field({field, setField, bombs, times, setTimes, flags, s
   }
 
   return(
-    <ScrollView horizontal={true}>
-      <ScrollView>
-        <View style={styles.field}>
-          {field?.map((cellX:any, indexX:number)=>{
-            return(
-              <View style={styles.fieldCellX} key={cellX.id}>{cellX.row.map((cell:any, index:number)=>{
-                return(
-                  <Pressable onPress={()=>cellClick(indexX, index)} onLongPress={()=>putFlag(cell)} delayLongPress={300}>
-                    <View style={cell.click && cell.bomb ? styles.cellB : 
-                      cell.click && cell.countBomb === 0 ? styles.cellC : 
-                      cell.click && cell.countBomb === 1 ? styles.cell1 : 
-                      cell.click && cell.countBomb === 2 ? styles.cell2 : 
-                      cell.click && cell.countBomb === 3 ? styles.cell3 : 
-                      cell.click && cell.countBomb === 4 ? styles.cell4 : 
-                      cell.click && cell.countBomb === 5 ? styles.cell5 : 
-                      cell.click && cell.countBomb === 6 ? styles.cell6 : 
-                      cell.click && cell.countBomb === 7 ? styles.cell7 : 
-                      cell.click && cell.countBomb === 8 ? styles.cell8 : 
-                      cell.flag === true ? styles.cellF :
-                      styles.cell} key={cell.id}>
-                      {cell.countBomb ? <Text style={styles.cellText}>{cell.countBomb}</Text> : null}
-                    </View>
-                  </Pressable>
-                )
-              })}</View>
-            )
-          })}
-        </View>
-      </ScrollView>
-    </ScrollView>
+    <DraxProvider>
+      <GestureHandlerRootView>
+        <DraxView/>
+      </GestureHandlerRootView>
+      <View style={styles.field}>
+        {field?.map((cellX:any, indexX:number)=>{
+          return(
+            <View style={styles.fieldCellX} key={"row" + cellX.id}>{cellX.row.map((cell:any, index:number)=>{
+              return(
+                <Pressable onPress={()=>cellClick(indexX, index)} onLongPress={()=>putFlag(cell)} delayLongPress={300}>
+                  <View style={cell.click && cell.bomb ? styles.cellB : 
+                    cell.click && cell.countBomb === 0 ? styles.cellC : 
+                    cell.click && cell.countBomb === 1 ? styles.cell1 : 
+                    cell.click && cell.countBomb === 2 ? styles.cell2 : 
+                    cell.click && cell.countBomb === 3 ? styles.cell3 : 
+                    cell.click && cell.countBomb === 4 ? styles.cell4 : 
+                    cell.click && cell.countBomb === 5 ? styles.cell5 : 
+                    cell.click && cell.countBomb === 6 ? styles.cell6 : 
+                    cell.click && cell.countBomb === 7 ? styles.cell7 : 
+                    cell.click && cell.countBomb === 8 ? styles.cell8 : 
+                    cell.flag === true ? styles.cellF :
+                    styles.cell} key={"cell" + cell.id}>
+                    {cell.countBomb ? <Text style={styles.cellText}>{cell.countBomb}</Text> : null}
+                  </View>
+                </Pressable>
+              )
+            })}</View>
+          )
+        })}
+      </View>
+    </DraxProvider>
   )
 }
