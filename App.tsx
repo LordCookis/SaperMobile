@@ -1,6 +1,6 @@
 import { styles } from './styles/styles'
 import { useState, useRef, useEffect } from 'react'
-import { View, Text, Pressable, StatusBar, Dimensions } from 'react-native'
+import { View, Text, Pressable, StatusBar, Dimensions, ScaledSize } from 'react-native'
 import Settings from './components/Settings'
 import Field from './components/Field'
 import Result from './components/Result'
@@ -30,7 +30,12 @@ export default function App() {
   const [error, setError] = useState<string>('')
   const [orientation, setOrientation] = useState<boolean>(Dimensions.get('window').width > Dimensions.get('window').height ? true : false)
 
-  useEffect(() => { setOrientation(Dimensions.get('window').width > Dimensions.get('window').height ? true : false) }, [])
+  const handleOrientationChange = ({window}:{window:ScaledSize}) => {
+    const newOrientation = window.width > window.height ? true : false
+    setOrientation(newOrientation)
+  }
+  
+  useEffect(() => { Dimensions.addEventListener('change', handleOrientationChange) }, [])
 
   useEffect(()=>{
     if (!win.current) {
