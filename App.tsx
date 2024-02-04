@@ -1,29 +1,47 @@
-import { StatusBar } from 'expo-status-bar'
 import { styles } from './styles/styles'
-import { useState, useRef } from 'react'
-import * as React from 'react'
-import { View, Text, Pressable } from 'react-native'
-import GameInputs from './components/GameInputs'
+import { useState, useRef, useEffect } from 'react'
+import { View, Text, Pressable, StatusBar, Dimensions } from 'react-native'
+import Settings from './components/Settings'
 import Field from './components/Field'
 import Result from './components/Result'
 
+interface Field {
+  id: number,
+  row: Cell[],
+}
+interface Cell {
+  id: number,
+  bomb: boolean,
+  click: boolean,
+  countBomb: number,
+  flag: boolean,
+}
+interface Data {X: number, Y: number}
+
 export default function App() {
-  const [field, setField] = useState<any>([])
-  interface Size {X: number, Y: number}
-  const [size, setSize] = useState<Size>({X: 0, Y: 0})
-  interface Bomb {X: number, Y: number}
-  const [bombs, setBombs] = useState<Bomb>({X: 0, Y: 0})
-  interface Time {X: number, Y: number}
-  const [times, setTimes] = useState<Time>({X: 0, Y: 0})
-  interface Flag {X: number, Y: number}
-  const [flags, setFlags] = useState<Flag>({X: 0, Y: 0})
+  const [field, setField] = useState<Field[]>([])
+  const [size, setSize] = useState<Data>({X: 0, Y: 0})
+  const [bombs, setBombs] = useState<Data>({X: 0, Y: 0})
+  const [times, setTimes] = useState<Data>({X: 0, Y: 0})
+  const [flags, setFlags] = useState<Data>({X: 0, Y: 0})
   const gameActive = useRef<boolean>(false)
   const executed = useRef<boolean>(false)
   const win = useRef<number>(0)
-  const [error, setError] = useState<string>("")
+  const [error, setError] = useState<string>('')
+  const [orientation, setOrientation] = useState<boolean>(Dimensions.get('window').width > Dimensions.get('window').height ? true : false)
+
+  useEffect(() => { setOrientation(Dimensions.get('window').width > Dimensions.get('window').height ? true : false) }, [])
+
+  useEffect(()=>{
+    if (!win.current) {
+      setBombs({...bombs, Y: 0})
+      setTimes({...times, Y: 0})
+      setFlags({X: 0, Y: 0})
+    }
+  }, [win.current])
 
   const gameStart = () => {
-    const fieldX:any = []
+    const fieldX:Field[] = []
     let idX:number = 0
     if (!size.X || !size.Y) {
       setError("Ошибка: размер поля не указан")
@@ -35,73 +53,70 @@ export default function App() {
       setError("Ошибка: должна быть минимум одна бомба")
     } else {
       for (let i = 0; i < size.X; i++) {
-        const rowX:any = []
+        const rowX:Cell[] = []
         for (let j = 0; j < size.Y; j++) {
           rowX.push({
             id: idX,
             bomb: false,
             click: false,
             countBomb: 0,
-            flag: false
+            flag: false,
           })
           idX++
         }
         fieldX.push({
           id: i,
-          row: rowX
+          row: rowX,
         })
       }
       setField(fieldX)
       setBombs({...bombs, Y: bombs.X})
       setTimes({...times, Y: times.X})
       setFlags({X: 0, Y: 0})
+      setError('')
       gameActive.current = true
       executed.current = false
     }
   }
 
   return(
-    <View style={styles.mainView}>
-      <Text style={styles.mainText}>💥Разрывная💥</Text>
-      <GameInputs
-        size = {size}
-        setSize = {setSize}
-        bombs = {bombs}
-        setBombs = {setBombs}
-        times = {times}
-        setTimes = {setTimes}
-      />
-      <Pressable style={styles.buttonView} onPress={gameStart}>
-        <Text style={styles.button}>НАЧАТЬ ИГРУ</Text>
-      </Pressable>
-      {times.Y ? <View style={styles.viewInfo}>
-        <Text style={styles.textInfo}>Отмечено: {flags.X} / {bombs.Y}</Text>
-        <Text style={styles.textInfo}>Времени осталось: {times.Y}c</Text>
-      </View> :
-      <View style={styles.viewInfo}>
-        <Text style={styles.textInfo}>Отмечено: {flags.X} / {bombs.Y}</Text>
-      </View>}
-      {<Field
-        field = {field}
-        setField = {setField}
-        bombs = {bombs}
-        times = {times}
-        setTimes = {setTimes}
-        flags = {flags}
-        setFlags = {setFlags}
-        executed = {executed}
-        win = {win}
-      />}
-      <StatusBar style="light"/>
-      <Text style={styles.errorText}>{error}</Text>
+    <View style={!orientation ? styles.mainViewPortrait : styles.mainViewLandscape}>
+      <View style={[!orientation ? styles.mainViewPortrait : styles.mainViewLandscape, win.current ? {pointerEvents: 'none'} : null]}>
+        <View>
+          <Text style={styles.mainText}>💥Разрывная💥</Text>
+          <Settings
+            size = {size}
+            setSize = {setSize}
+            bombs = {bombs}
+            setBombs = {setBombs}
+            times = {times}
+            setTimes = {setTimes}
+            gameActive = {gameActive}/>
+          <Pressable style={styles.buttonView} onPress={gameStart}>
+            <Text style={styles.button}>НАЧАТЬ ИГРУ</Text>
+          </Pressable>
+        </View>
+        {<Field
+          field = {field}
+          setField = {setField}
+          bombs = {bombs}
+          times = {times}
+          setTimes = {setTimes}
+          flags = {flags}
+          setFlags = {setFlags}
+          executed = {executed}
+          win = {win}/>}
+        <StatusBar backgroundColor={'#080808'} barStyle={'light-content'}/>
+        <Text style={styles.errorText}>{error}</Text>
+      </View>
       {win.current === 0 || 
-      <Result
-        setField = {setField}
-        size = {size}
-        bombs = {bombs}
-        times = {times}
-        win = {win}
-      />}
+        <Result
+          setField = {setField}
+          size = {size}
+          bombs = {bombs}
+          times = {times}
+          win = {win}
+          gameActive = {gameActive}/>}
     </View>
   )
 }

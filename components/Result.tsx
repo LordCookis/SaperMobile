@@ -1,11 +1,11 @@
 import { styles } from '../styles/styles'
-import * as React from 'react'
 import { View, Text, Pressable } from "react-native"
 
-export default function Result({setField, size, bombs, times, win}:any){
+export default function Result({setField, size, bombs, times, win, gameActive}:any){
   const newGame = () => {
     setField([])
     win.current = 0
+    gameActive.current = false
   }
 
   const timeSpent = `${Math.floor((times.X - times.Y) / 60)}:${((times.X - times.Y) % 60).toString().padStart(2, '0')}`

@@ -1,10 +1,20 @@
 import { styles } from '../styles/styles'
-import * as React from 'react'
 import { useEffect } from 'react' 
-import { View, ScrollView, Pressable, Text } from "react-native"
-import { DraxProvider, DraxView } from 'react-native-drax'
+import { View, Pressable, Text } from "react-native"
 import { services } from '../services'
-import { GestureHandlerRootView } from 'react-native-gesture-handler'
+import { cellColor } from '../utils/cellColor'
+
+interface Field {
+  id: number,
+  row: Cell[],
+}
+interface Cell {
+  id: number,
+  bomb: boolean,
+  click: boolean,
+  countBomb: number,
+  flag: boolean,
+}
 
 export default function Field({field, setField, bombs, times, setTimes, flags, setFlags, executed, win}:any) {
   useEffect(() => {
@@ -14,15 +24,15 @@ export default function Field({field, setField, bombs, times, setTimes, flags, s
     }
   }, [flags.X])
 
-  const randomBomb = (cell:any) => {
-    const arrayBombs:any = []
+  const randomBomb = (cell:Cell) => {
+    const arrayBombs:number[] = []
     while (arrayBombs.length < bombs.Y) {
       const randomCell = Math.floor(Math.random() * (field.length * field[0].row.length))
       randomCell !== cell.id && !arrayBombs.includes(randomCell) ? arrayBombs.push(randomCell) : null
     }
     const fieldX = [...field]
     fieldX.map((rowX) => {
-      rowX.row.map((cellX:any) => arrayBombs.includes(cellX.id) ? cellX.bomb = true : null)
+      rowX.row.map((cellX:Cell) => arrayBombs.includes(cellX.id) ? cellX.bomb = true : null)
     })
     setField(fieldX)
   }
@@ -45,7 +55,7 @@ export default function Field({field, setField, bombs, times, setTimes, flags, s
   }
 
   const checkCell = (idX:number, id:number) => {
-    const fieldX:any = [...field]
+    const fieldX:Field[] = [...field]
     fieldX[idX].row[id].click = true
     let stack:{idX:number; id:number}[] = [{idX, id}]
     while (stack.length > 0) {
@@ -54,7 +64,7 @@ export default function Field({field, setField, bombs, times, setTimes, flags, s
       fieldX[idX].row[id].countBomb = services.saper.checkBomb(idX, id, fieldX)
       if (fieldX[idX].row[id].bomb) {
         fieldX[idX].row[id].countBomb = 0
-        fieldX.forEach((rowX: any) => {rowX.row.forEach((cellX: any) => {cellX.bomb ? cellX.click = true : null})})
+        fieldX.forEach((rowX:Field) => {rowX.row.forEach((cellX:Cell) => {cellX.bomb ? cellX.click = true : null})})
         win.current = 2
       } else if (!fieldX[idX].row[id].countBomb) {    
         stack = services.saper.checkAround(idX, id, fieldX, stack)
@@ -73,7 +83,7 @@ export default function Field({field, setField, bombs, times, setTimes, flags, s
     if (!cell.flag && !cell.click) { checkCell(idX, id) }
   }
 
-  const putFlag = (cell:any) => {
+  const putFlag = (cell:Cell) => {
     if (!cell.click && executed.current) {
       if (cell.flag) {
         cell.flag = false
@@ -86,36 +96,24 @@ export default function Field({field, setField, bombs, times, setTimes, flags, s
   }
 
   return(
-    <DraxProvider>
-      <GestureHandlerRootView>
-        <DraxView/>
-      </GestureHandlerRootView>
-      <View style={styles.field}>
-        {field?.map((cellX:any, indexX:number)=>{
-          return(
-            <View style={styles.fieldCellX} key={"row" + cellX.id}>{cellX.row.map((cell:any, index:number)=>{
-              return(
-                <Pressable onPress={()=>cellClick(indexX, index)} onLongPress={()=>putFlag(cell)} delayLongPress={300}>
-                  <View style={cell.click && cell.bomb ? styles.cellB : 
-                    cell.click && cell.countBomb === 0 ? styles.cellC : 
-                    cell.click && cell.countBomb === 1 ? styles.cell1 : 
-                    cell.click && cell.countBomb === 2 ? styles.cell2 : 
-                    cell.click && cell.countBomb === 3 ? styles.cell3 : 
-                    cell.click && cell.countBomb === 4 ? styles.cell4 : 
-                    cell.click && cell.countBomb === 5 ? styles.cell5 : 
-                    cell.click && cell.countBomb === 6 ? styles.cell6 : 
-                    cell.click && cell.countBomb === 7 ? styles.cell7 : 
-                    cell.click && cell.countBomb === 8 ? styles.cell8 : 
-                    cell.flag === true ? styles.cellF :
-                    styles.cell} key={"cell" + cell.id}>
-                    {cell.countBomb ? <Text style={styles.cellText}>{cell.countBomb}</Text> : null}
-                  </View>
-                </Pressable>
-              )
-            })}</View>
-          )
-        })}
-      </View>
-    </DraxProvider>
+    <View style={styles.field}>
+      {bombs.Y ? <View style={styles.viewInfo}>
+        <Text style={styles.textInfo}>Отмечено: {flags.X} / {bombs.Y}</Text>
+        {times.Y ? <Text style={styles.textInfo}>Времени осталось: {times.Y}c</Text> : null}
+      </View> : null}
+      {field?.map((cellX:Field, indexX:number)=>{
+        return(
+          <View style={styles.fieldCellX} key={"row" + cellX.id}>{cellX.row.map((cell:Cell, index:number)=>{
+            return(
+              <Pressable onPress={()=>cellClick(indexX, index)} onLongPress={()=>putFlag(cell)} delayLongPress={300}>
+                <View style={[styles.cell, {backgroundColor: cellColor(cell)}]} key={"cell" + cell.id}>
+                  {cell.countBomb ? <Text style={styles.cellText}>{cell.countBomb}</Text> : null}
+                </View>
+              </Pressable>
+            )
+          })}</View>
+        )
+      })}
+    </View>
   )
 }
